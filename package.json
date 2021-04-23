@@ -1,6 +1,6 @@
 {
   "name": "atomicky",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -12,7 +12,7 @@
     "type": "git",
     "url": "git+https://github.com/m1st1ck/atomicky.git"
   },
-  "keywords": [],
+  "keywords": ["state", "atom", "atomicky"],
   "author": "",
   "license": "ISC",
   "bugs": {

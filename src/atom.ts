@@ -67,14 +67,8 @@ const atomCore = <T>(defaultState: T): AtomCore<T> => {
   };
 };
 
-export const atom = <T>(defaultState: T, name?: string): Atom<T> => {
+export const atom = <T>(defaultState: T): Atom<T> => {
   const _atomCore = atomCore(defaultState);
-
-  if (name) {
-    _atomCore.subscribe(() => {
-      console.log(name, _atomCore.getState());
-    });
-  }
 
   return {
     subscribe: _atomCore.subscribe,
@@ -102,14 +96,14 @@ export type SetHttpState<T> = (
 export type GetHttpState<T> = () => [T, HttpState];
 
 export const defaultHttpState: HttpState = {
-  init: false,
+  init: true,
   loading: false,
   loaded: false,
   error: false,
   errorMessage: undefined,
 };
 
-export const httpAtom = <T>(defaultState: T, name?: string) => {
+export const httpAtom = <T>(defaultState: T) => {
   const _atomCore = atomCore(defaultState);
   let currentHttpState = defaultHttpState;
 
@@ -117,11 +111,13 @@ export const httpAtom = <T>(defaultState: T, name?: string) => {
     if (typeof nHttpState === "function") {
       currentHttpState = {
         ...defaultHttpState,
+        init: false,
         ...(nHttpState as SetHttpStateFuncArg)(currentHttpState),
       };
     } else {
       currentHttpState = {
         ...defaultHttpState,
+        init: false,
         ...nHttpState,
       };
     }
@@ -143,12 +139,6 @@ export const httpAtom = <T>(defaultState: T, name?: string) => {
     _atomCore.reset();
     setHttpState({});
   };
-
-  if (name) {
-    _atomCore.subscribe(() => {
-      console.log(name, _atomCore.getState(), currentHttpState);
-    });
-  }
 
   return {
     subscribe: _atomCore.subscribe,
