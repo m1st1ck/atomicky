@@ -1,5 +1,5 @@
 {
-  "name": "atomicState",
+  "name": "atomicky",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
@@ -10,15 +10,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/m1st1ck/atomicState.git"
+    "url": "git+https://github.com/m1st1ck/atomicky.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/m1st1ck/atomicState/issues"
+    "url": "https://github.com/m1st1ck/atomicky/issues"
   },
-  "homepage": "https://github.com/m1st1ck/atomicState#readme",
+  "homepage": "https://github.com/m1st1ck/atomicky#readme",
   "devDependencies": {
     "@types/react": "^17.0.3",
     "@types/react-dom": "^17.0.3",
