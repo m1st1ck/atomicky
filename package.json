@@ -12,7 +12,11 @@
     "type": "git",
     "url": "git+https://github.com/m1st1ck/atomicky.git"
   },
-  "keywords": ["state", "atom", "atomicky"],
+  "keywords": [
+    "state",
+    "atom",
+    "atomicky"
+  ],
   "author": "",
   "license": "ISC",
   "bugs": {
