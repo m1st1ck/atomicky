@@ -137,7 +137,7 @@ export const httpAtom = <T>(defaultState: T) => {
 
   const reset = () => {
     _atomCore.reset();
-    setHttpState({});
+    setHttpState(defaultHttpState);
   };
 
   return {
