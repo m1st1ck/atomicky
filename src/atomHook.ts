@@ -1,10 +1,7 @@
 import { useState, useEffect } from "react";
-import { GetState, Subscribe } from "./atom";
+import { ObservableAtom } from "./atom";
 
-export const useAtom = <T>(atom: {
-  getState: GetState<T>;
-  subscribe: Subscribe;
-}) => {
+export const useAtom = <T>(atom: ObservableAtom<T>) => {
   const [state, setState] = useState(atom.getState());
 
   useEffect(() => {

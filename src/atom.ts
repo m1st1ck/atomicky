@@ -20,6 +20,8 @@ export type Atom<T> = {
   reset: Reset;
 };
 
+export type ObservableAtom<T> = Pick<Atom<T>, "getState" | "subscribe">;
+
 const isObject = (a: any) => !!a && a.constructor === Object;
 
 const atomCore = <T>(defaultState: T): AtomCore<T> => {
