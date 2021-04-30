@@ -1,8 +1,9 @@
 # Atomicky
 
-State management with small atomic chunks
+### Flexible state management
 
-### atom
+## Atoms
+### atom(state): Atom
 
 ```javascript
 import { atom } from "atomicky";
@@ -13,6 +14,15 @@ const countAtom = atom(0);
 countAtom.setState(2);
 // change state with callback function
 countAtom.setState((previousCount) => previousCount + 1);
+
+const userAtom = atom({ name: "Stad", age: 2 });
+// updating objects directly will merge with previous state
+userAtom.setState({ age: 3 }); // { name: "Stad", age: 3 }
+// using update function needs to provide the whole object
+userAtom.setState((prevState) => ({
+  ...prevState,
+  age: 4
+}));
 // get state
 const count = countAtom.getState(); // count === 3
 // listen for changes to state
@@ -26,7 +36,7 @@ unsubscribe();
 countAtom.reset();
 ```
 
-### httpAtom
+### httpAtom(state): Atom
 
 contains an additional http state
 
@@ -57,8 +67,11 @@ const httpState = countAtom.getHttpState();
 countAtom.setHttpState({ loading: true }); // { loading: true, init: false, error: false, ... }
 // update both state
 countAtom.setHttpState({ loaded: true }, 4); // count === 4
+// handle errors
+countAtom.setHttpState({ error: true, errorMessage: "..." });
 ```
-### useAtom
+## Hooks
+### useAtom(Atom): state
 ```javascript
 import { httpAtom, atom, useAtom } from "atomicky";
 
@@ -69,31 +82,35 @@ const [name, { loading }] = useAtom(nameAtom);
 const count = useAtom(countAtom);
 ```
 
-### Exaples
+## Utils
+### waitForAtom(atom, selector): Promise
 ```javascript
-import { httpAtom } from "atomicky";
+import { httpAtom, waitForAtom } from "../src/.";
 
-const userAtom = httpAtom<User>(undefined);
+const userAtom = httpAtom({ name: undefined });
 
-userAtom.setHttpState({ loading: true });
-fetch("/user")
-  .then((res) => {
-    userAtom.setHttpState({ loaded: true }, res);
-  })
-  .catch((err) => {
-    userAtom.setHttpState({ error: true, errorMessage: err });
-  });
+const fetchUser = async () => {
+  const { loading } = userAtom.getHttpState();
+
+  // don't fetch if already fetching
+  if (loading) {
+    // wait for original fetch to finish
+    await waitForAtom(userAtom, ([, { loaded }]) => loaded);
+    // return fetch data
+    return userAtom.getCoreState();
+  }
+
+  // Fetch user... and update atom
+  userAtom.setHttpState({ loaded: true }, user);
+};
 ```
-
+### waitForAtoms([atom], selector): Promise
 ```javascript
-import { atom } from "atomicky";
+import { waitForAtoms } from "../src/.";
 
-const userAtom = atom({ name: "Stad", age: 2 });
-// updating objects directly will merge with previous state
-userAtom.setState({ age: 3 }); // { name: "Stad", age: 3 }
-// using update function needs to provide the whole object
-userAtom.setState((prevState) => ({
-  ...prevState,
-  age: 4
-}));
+waitForAtoms(
+  [atom1, atom2],
+  ([[atom1Data, atom1HttpStatus], [atom2Data, atom2HttpStatus]]) =>
+    atom1HttpStatus.loaded || atom1HttpStatus.loaded
+).then(() => {});
 ```
