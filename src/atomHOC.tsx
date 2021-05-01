@@ -30,9 +30,11 @@ export const withAtom: WithAtom = (atoms) => <P extends unknown>(
   class extends React.Component<P> {
     atomSubscriptions: Unsubscribe[] = [];
 
-    state = {};
+    constructor(props: any) {
+      super(props);
 
-    componentDidMount() {
+      const state: AtomsMap = {};
+
       Object.keys(atoms).forEach((atomName) => {
         const atom = atoms[atomName];
         this.atomSubscriptions.push(
@@ -42,10 +44,10 @@ export const withAtom: WithAtom = (atoms) => <P extends unknown>(
             });
           })
         );
-        this.setState({
-          [atomName]: atom.getState(),
-        });
+        state[atomName] = atom.getState();
       });
+
+      this.state = state;
     }
 
     componentWillUnmount() {
