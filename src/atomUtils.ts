@@ -1,16 +1,9 @@
-import { ObservableAtom, Subscribe } from "./atom";
+import { IterateAtomsIteratable, ObservableAtom, Subscribe } from "./atom";
 
 export type WaitForAtom = <T>(
   atom: ObservableAtom<T>,
   selector: (atomState: T) => boolean
 ) => Promise<void>;
-
-type GetAtomType<ATOM> = ATOM extends ObservableAtom<infer ATOMVALUE>
-  ? ATOMVALUE
-  : never;
-type AtomTuplesToValue<ATOMSTUPLE> = {
-  [INDEX in keyof ATOMSTUPLE]: GetAtomType<ATOMSTUPLE[INDEX]>;
-};
 
 export const waitForAtom: WaitForAtom = (atom, selector) => {
   if (selector(atom.getState())) {
@@ -29,7 +22,7 @@ export const waitForAtom: WaitForAtom = (atom, selector) => {
 
 export const waitForAtoms = <T extends ObservableAtom<any>[]>(
   atoms: readonly [...T],
-  selector: (atomState: AtomTuplesToValue<T>) => boolean
+  selector: (atomState: IterateAtomsIteratable<T>) => boolean
 ): Promise<void> => {
   const getState = () => atoms.map((atom) => atom.getState());
   const subscribe: Subscribe = (cb) => {
@@ -37,13 +30,13 @@ export const waitForAtoms = <T extends ObservableAtom<any>[]>(
     return () => unsubs.forEach((unsub) => unsub());
   };
 
-  if (selector(getState() as AtomTuplesToValue<T>)) {
+  if (selector(getState() as IterateAtomsIteratable<T>)) {
     return Promise.resolve();
   }
 
   return new Promise((resolve) => {
     const unsub = subscribe(() => {
-      if (selector(getState() as AtomTuplesToValue<T>)) {
+      if (selector(getState() as IterateAtomsIteratable<T>)) {
         resolve();
         unsub();
       }

@@ -22,6 +22,14 @@ export type Atom<T> = {
 
 export type ObservableAtom<T> = Pick<Atom<T>, "getState" | "subscribe">;
 
+export type GetAtomValue<ATOM> = ATOM extends ObservableAtom<infer ATOMVALUE>
+  ? ATOMVALUE
+  : never;
+
+export type IterateAtomsIteratable<ATOMSTUPLE> = {
+  [INDEX in keyof ATOMSTUPLE]: GetAtomValue<ATOMSTUPLE[INDEX]>;
+};
+
 const isObject = (a: any) => !!a && a.constructor === Object;
 
 const atomCore = <T>(defaultState: T): AtomCore<T> => {
