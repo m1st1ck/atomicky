@@ -20,6 +20,7 @@ type WithAtom = <T extends AtomsMap>(
   atoms: T
 ) => <P extends unknown>(
   WrappedComponent: React.ComponentType<P>,
+  // TODO: need better way to infer props
   noop?: T
 ) => any;
 
