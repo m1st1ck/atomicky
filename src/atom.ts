@@ -101,7 +101,7 @@ export type SetHttpStateFuncArg = (
 ) => Partial<HttpState>;
 export type SetHttpState<T> = (
   nHttpState: Partial<HttpState> | SetHttpStateFuncArg,
-  nState?: T | SetStateFuncArg<T>
+  nState?: Partial<T> | SetStateFuncArg<T>
 ) => void;
 export type GetHttpState<T> = () => [T, HttpState];
 
