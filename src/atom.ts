@@ -104,6 +104,7 @@ export type SetHttpState<T> = (
   nState?: Partial<T> | SetStateFuncArg<T>
 ) => void;
 export type GetHttpState<T> = () => [T, HttpState];
+export type ResetHttp = (httpState?: Partial<HttpState>) => void;
 
 export const defaultHttpState: HttpState = {
   init: true,
@@ -117,7 +118,7 @@ export const httpAtom = <T>(defaultState: T) => {
   const _atomCore = atomCore(defaultState);
   let currentHttpState = defaultHttpState;
 
-  const setHttpState: SetHttpState<T> = (nHttpState, nState) => {
+  const setState = (nHttpState: Partial<HttpState> | SetHttpStateFuncArg) => {
     if (typeof nHttpState === "function") {
       currentHttpState = {
         ...defaultHttpState,
@@ -131,6 +132,10 @@ export const httpAtom = <T>(defaultState: T) => {
         ...nHttpState,
       };
     }
+  };
+
+  const setHttpState: SetHttpState<T> = (nHttpState, nState) => {
+    setState(nHttpState);
 
     if (nState) {
       _atomCore.setState(nState);
@@ -145,9 +150,9 @@ export const httpAtom = <T>(defaultState: T) => {
     currentHttpState,
   ];
 
-  const reset = () => {
+  const reset: ResetHttp = (httpState = defaultHttpState) => {
+    setState(httpState);
     _atomCore.reset();
-    setHttpState(defaultHttpState);
   };
 
   return {

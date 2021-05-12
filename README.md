@@ -3,6 +3,7 @@
 ### Flexible state management
 
 ## Atoms
+
 ### atom(state): Atom
 
 ```javascript
@@ -21,7 +22,7 @@ userAtom.setState({ age: 3 }); // { name: "Stad", age: 3 }
 // using update function needs to provide the whole object
 userAtom.setState((prevState) => ({
   ...prevState,
-  age: 4
+  age: 4,
 }));
 // get state
 const count = countAtom.getState(); // count === 3
@@ -69,9 +70,16 @@ countAtom.setHttpState({ loading: true }); // { loading: true, init: false, erro
 countAtom.setHttpState({ loaded: true }, 4); // count === 4
 // handle errors
 countAtom.setHttpState({ error: true, errorMessage: "..." });
+// reset - will reset both state and httpState
+countAtom.reset(); // ({ init: true, loading: false, ... })
+// you can also provide httpState to reset to
+countAtom.reset({ loaded: true }); // ({ init: false, loaded: true, ... })
 ```
+
 ## Hooks
+
 ### useAtom(Atom): state
+
 ```javascript
 import { httpAtom, atom, useAtom } from "atomicky";
 
@@ -83,7 +91,9 @@ const count = useAtom(countAtom);
 ```
 
 ## Utils
+
 ### waitForAtom(atom, selector): Promise
+
 ```javascript
 import { httpAtom, waitForAtom } from "../src/.";
 
@@ -104,7 +114,9 @@ const fetchUser = async () => {
   userAtom.setHttpState({ loaded: true }, user);
 };
 ```
+
 ### waitForAtoms([atom], selector): Promise
+
 ```javascript
 import { waitForAtoms } from "../src/.";
 
