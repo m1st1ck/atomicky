@@ -24,22 +24,22 @@
   },
   "homepage": "https://github.com/m1st1ck/atomicky#readme",
   "devDependencies": {
-    "@types/jest": "^26.0.23",
-    "@types/react": "^17.0.3",
-    "@types/react-dom": "^17.0.3",
+    "@types/jest": "^27.0.1",
+    "@types/react": "^17.0.19",
+    "@types/react-dom": "^17.0.9",
     "babel-core": "^6.26.3",
     "babel-runtime": "^6.26.0",
-    "jest": "^26.6.3",
+    "jest": "^27.0.6",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "rollup": "^2.45.2",
+    "rollup": "^2.56.3",
     "rollup-plugin-typescript2": "^0.30.0",
-    "ts-jest": "^26.5.5",
-    "typescript": "^4.2.4"
+    "ts-jest": "^27.0.5",
+    "typescript": "^4.4.2"
   },
   "peerDependencies": {
-    "react": "^16.8.0",
-    "react-dom": "^16.8.0"
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
   },
   "files": [
     "dist"

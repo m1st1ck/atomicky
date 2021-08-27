@@ -27,93 +27,93 @@ describe("Utils", () => {
     userHttpAtom.reset();
   });
 
-  test("waitForAtom", async (done) => {
+  test("waitForAtom", (done) => {
     setTimeout(() => {
       userAtom.setState({ name: "Stad" });
     }, 0);
 
-    await waitForAtom(userAtom, (data) => data.name === "Stad");
-
-    expect(userAtom.getState().name).toBe("Stad");
-    done();
+    waitForAtom(userAtom, (data) => data.name === "Stad").then(() => {
+      expect(userAtom.getState().name).toBe("Stad");
+      done();
+    });
   });
 
-  test("waitForAtom stop", async (done) => {
+  test("waitForAtom stop", (done) => {
     const timeout = setTimeout(() => {
       expect(userAtom.getState().name).toBe(undefined);
       done();
     }, 0);
 
-    await waitForAtom(userAtom, ({ name }) => name === "Stad");
-
-    clearTimeout(timeout);
+    waitForAtom(userAtom, ({ name }) => name === "Stad").then(() => {
+      clearTimeout(timeout);
+    });
   });
 
-  test("waitForAtom http", async (done) => {
+  test("waitForAtom http", (done) => {
     setTimeout(() => {
       userHttpAtom.setHttpState({ loaded: true }, { name: "Stad" });
     }, 0);
 
-    await waitForAtom(userHttpAtom, ([, { loaded }]) => loaded);
+    waitForAtom(userHttpAtom, ([, { loaded }]) => loaded).then(() => {
+      expect(userHttpAtom.getCoreState().name).toBe("Stad");
+      expect(userHttpAtom.getHttpState()).toMatchObject({
+        init: false,
+        loading: false,
+        loaded: true,
+        error: false,
+        errorMessage: undefined,
+      });
 
-    expect(userHttpAtom.getCoreState().name).toBe("Stad");
-    expect(userHttpAtom.getHttpState()).toMatchObject({
-      init: false,
-      loading: false,
-      loaded: true,
-      error: false,
-      errorMessage: undefined,
+      done();
     });
-
-    done();
   });
 
-  test("waitForAtom http stop", async (done) => {
+  test("waitForAtom http stop", (done) => {
     const timeout = setTimeout(() => {
       expect(userHttpAtom.getState()[0].name).toBe(undefined);
       expect(userHttpAtom.getState()[1]).toMatchObject(defaultHttpState);
       done();
     }, 0);
 
-    await waitForAtom(
+    waitForAtom(
       userHttpAtom,
       ([{ name }, { loaded }]) => name === "Stad" && loaded
-    );
-
-    clearTimeout(timeout);
+    ).then(() => {
+      clearTimeout(timeout);
+    });
   });
 
-  test("waitForAtoms", async (done) => {
+  test("waitForAtoms", (done) => {
     userAtom.setState({ name: "Stad" });
     countAtom.setState(3);
 
-    await waitForAtoms(
+    waitForAtoms(
       [userAtom, countAtom],
       ([{ name }, count]) => name === "Stad" && count === 3
-    );
-
-    expect(userAtom.getState().name).toBe("Stad");
-    expect(countAtom.getState()).toBe(3);
-    done();
+    ).then(() => {
+      expect(userAtom.getState().name).toBe("Stad");
+      expect(countAtom.getState()).toBe(3);
+      done();
+    });
   });
 
-  test("waitForAtoms http", async (done) => {
+  test("waitForAtoms http", (done) => {
     setTimeout(() => {
       userHttpAtom.setHttpState({ loaded: true }, { name: "Stad" });
       countAtom.setState(2);
     }, 0);
 
-    await waitForAtoms(
+    waitForAtoms(
       [countAtom, userHttpAtom],
       ([countData, [, httpStatus]]) => httpStatus.loaded || countData === 3
-    );
-
-    expect(userHttpAtom.getState()[0].name).toBe("Stad");
-    expect(countAtom.getState()).toBe(2);
-    done();
+    ).then(() => {
+      expect(userHttpAtom.getState()[0].name).toBe("Stad");
+      expect(countAtom.getState()).toBe(2);
+      done();
+    });
   });
 
-  test("waitForAtoms http stop", async (done) => {
+  test("waitForAtoms http stop", (done) => {
     userHttpAtom.setHttpState({ loaded: true }, { name: "Stad" });
 
     const timeout = setTimeout(() => {
@@ -123,12 +123,12 @@ describe("Utils", () => {
       done();
     }, 100);
 
-    await waitForAtoms(
+    waitForAtoms(
       [countAtom, userHttpAtom],
       ([countData, [userData, httpStatus]]) =>
         httpStatus.loaded && userData.name === "Stad" && countData === 3
-    );
-
-    clearTimeout(timeout);
+    ).then(() => {
+      clearTimeout(timeout);
+    });
   });
 });
