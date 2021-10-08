@@ -35,22 +35,41 @@ const isObject = (a: any) => !!a && a.constructor === Object;
 const atomCore = <T>(defaultState: T): AtomCore<T> => {
   let currentState = defaultState;
 
-  const listeners: Listener[] = [];
+  let listeners: Listener[] = [];
+  let nextListeners = listeners;
+
+  /**
+   * This makes a shallow copy of listeners so we can use
+   * nextListeners as a temporary list while notifying.
+   *
+   * This prevents any bugs around consumers calling
+   * subscribe/unsubscribe in the middle of a notify.
+   */
+  const ensureCanMutateNextListeners = () => {
+    if (nextListeners === listeners) {
+      nextListeners = listeners.slice();
+    }
+  };
 
   const subscribe: Subscribe = (listener) => {
     if (typeof listener !== "function") {
       throw new Error("Expected the listener to be a function.");
     }
 
-    listeners.push(listener);
+    ensureCanMutateNextListeners();
+    nextListeners.push(listener);
 
     return () => {
-      const index = listeners.indexOf(listener);
-      listeners.splice(index, 1);
+      ensureCanMutateNextListeners();
+      const index = nextListeners.indexOf(listener);
+      nextListeners.splice(index, 1);
     };
   };
 
-  const notify: Notify = () => listeners.forEach((listener) => listener());
+  const notify: Notify = () => {
+    listeners = nextListeners;
+    listeners.forEach((listener) => listener());
+  };
 
   const setState: SetState<T> = (nState) => {
     if (typeof nState === "function") {

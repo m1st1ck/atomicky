@@ -345,4 +345,59 @@ describe("Atoms", () => {
     userHttpAtom.setHttpState({ loaded: true }, { name: "Stad" });
     expect(listener).toHaveBeenCalledTimes(0);
   });
+
+  test("multiple subscriptions atom", () => {
+    const listener = jest.fn();
+    const listener2 = jest.fn();
+    const listener3 = jest.fn();
+    countAtom.subscribe(listener);
+    countAtom.subscribe(listener2);
+    countAtom.setState(15);
+    countAtom.subscribe(listener3);
+    expect(listener).toHaveBeenCalledTimes(1);
+    expect(listener2).toHaveBeenCalledTimes(1);
+    expect(listener3).toHaveBeenCalledTimes(0);
+    countAtom.reset();
+    expect(listener).toHaveBeenCalledTimes(2);
+    expect(listener2).toHaveBeenCalledTimes(2);
+    expect(listener3).toHaveBeenCalledTimes(1);
+  });
+
+  test("multiple subscriptions with unsub atom", () => {
+    const listener = jest.fn();
+    const listener2 = jest.fn();
+    const listener3 = jest.fn();
+    const unsub = countAtom.subscribe(listener);
+    countAtom.subscribe(listener2);
+    countAtom.setState(15);
+    countAtom.subscribe(listener3);
+    unsub();
+    expect(listener).toHaveBeenCalledTimes(1);
+    expect(listener2).toHaveBeenCalledTimes(1);
+    expect(listener3).toHaveBeenCalledTimes(0);
+    countAtom.reset();
+    expect(listener).toHaveBeenCalledTimes(1);
+    expect(listener2).toHaveBeenCalledTimes(2);
+    expect(listener3).toHaveBeenCalledTimes(1);
+  });
+
+  test("multiple subscriptions with inner unsub atom", () => {
+    const listener = jest.fn();
+    const listener2 = jest.fn();
+    const listener3 = jest.fn();
+    const unsub = countAtom.subscribe(() => {
+      listener();
+      unsub();
+    });
+    countAtom.subscribe(listener2);
+    countAtom.setState(15);
+    countAtom.subscribe(listener3);
+    expect(listener).toHaveBeenCalledTimes(1);
+    expect(listener2).toHaveBeenCalledTimes(1);
+    expect(listener3).toHaveBeenCalledTimes(0);
+    countAtom.reset();
+    expect(listener).toHaveBeenCalledTimes(1);
+    expect(listener2).toHaveBeenCalledTimes(2);
+    expect(listener3).toHaveBeenCalledTimes(1);
+  });
 });
